@@ -54,13 +54,13 @@ func init() {
 func NewNRGKickGen2FromConfig(other map[string]interface{}) (api.Charger, error) {
 	cc := struct {
 		modbus.TcpSettings       `mapstructure:",squash"`
-		mARegulation, phases1p3p bool
+		MARegulation, Phases1p3p bool
 	}{
 		TcpSettings: modbus.TcpSettings{
 			ID: 1, // default
 		},
-		mARegulation: false,
-		phases1p3p:   false,
+		MARegulation: false,
+		Phases1p3p:   false,
 	}
 
 	if err := util.DecodeOther(other, &cc); err != nil {
@@ -77,11 +77,11 @@ func NewNRGKickGen2FromConfig(other map[string]interface{}) (api.Charger, error)
 		phasesS   func(int) error
 	)
 
-	if cc.mARegulation {
+	if cc.MARegulation {
 		chargerEx = nrg.maxCurrentMillis
 	}
 
-	if cc.phases1p3p {
+	if cc.Phases1p3p {
 		// user could have an adapter plug which doesn't support 3 phases
 		if b, err := nrg.conn.ReadHoldingRegisters(nrgKickGen2MaxPhases, 1); err == nil {
 			if maxPhases := encoding.Uint16(b); maxPhases > 1 {
